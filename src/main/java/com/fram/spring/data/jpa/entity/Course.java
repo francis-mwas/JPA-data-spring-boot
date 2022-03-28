@@ -1,18 +1,18 @@
 package com.fram.spring.data.jpa.entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Course {
 
     @Id
@@ -34,10 +34,33 @@ public class Course {
     )
     private CourseMaterial courseMaterial;
 
-    @ManyToOne
+    @ManyToOne(
+            cascade = CascadeType.ALL
+    )
     @JoinColumn(
             name = "teacher_id",
             referencedColumnName = "teacherId"
     )
     private Teacher teacher;
+
+
+    @ManyToMany(
+            cascade = CascadeType.ALL
+    )
+    @JoinTable(
+            name = "student_course_map",
+            joinColumns = @JoinColumn(
+                    name = "course_id",
+                    referencedColumnName = "courseId"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "student_id",
+                    referencedColumnName = "studentId"
+            )
+    )
+    private List<Student> studentList;
+    public void addStudents(Student student){
+        if(studentList == null) studentList = new ArrayList<>();
+        studentList.add(student);
+    }
 }
